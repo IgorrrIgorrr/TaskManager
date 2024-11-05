@@ -40,6 +40,7 @@ async def create_tables():
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 description TEXT NOT NULL,
+                status VARCHAR(50) NOT NULL,
                 user_id INTEGER NOT NULL,
                 CONSTRAINT fk_users
                     FOREIGN KEY (user_id)
