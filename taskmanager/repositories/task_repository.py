@@ -21,7 +21,7 @@ class TaskRepository:
             )
         return Task(**row)
 
-    async def get_tasks(self, status: StatusFilter) -> list[Task]:
+    async def get_tasks(self, status: StatusFilter | None = None) -> list[Task]:
         pool = await get_pool()
         async with pool.acquire() as conn:
             query = "SELECT id, name, description, status FROM tasks"

@@ -15,7 +15,7 @@ class Service:
     async def create_task(self, task: CreateTask) -> Task:
         return await self._task_repository.create_task(task)
 
-    async def get_tasks(self, status: StatusFilter) -> list[Task]:
+    async def get_tasks(self, status: StatusFilter | None = None) -> list[Task]:
         return await self._task_repository.get_tasks(status)
 
     async def update_task(self, task_id: int, update_info: UpdateTask) -> Task:

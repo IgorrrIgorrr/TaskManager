@@ -16,7 +16,7 @@ repos:
       rev: v3.3.1
       hooks:
         - id: pylint
-          args: ["--disable= C0114, E0401, W0611, C0115, C0116, C0103, R0903, W0603"]
+          args: ["--disable= C0114, W0622, E0401, W0611, C0115, C0116, C0103, R0903, W0603"]
 
 
     - repo: https://github.com/psf/black
