@@ -32,7 +32,7 @@ async def create_tables():
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(50) NOT NULL,
                 password_hash VARCHAR(128) NOT NULL
-            );"""
+            )"""
         )
 
         await conn.execute(
@@ -46,5 +46,5 @@ async def create_tables():
                     FOREIGN KEY (user_id)
                     REFERENCES users(id)
                     ON DELETE CASCADE
-            );"""
+            )"""
         )

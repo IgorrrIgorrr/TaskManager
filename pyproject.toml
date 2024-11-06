@@ -11,6 +11,7 @@ fastapi = {extras = ["all"], version = "^0.115.4"}
 asyncpg = "^0.30.0"
 pydantic-settings = "^2.6.1"
 asyncio = "^3.4.3"
+python-multipart = "^0.0.17"
 
 
 [tool.poetry.group.dev.dependencies]
