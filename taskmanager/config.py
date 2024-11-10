@@ -7,11 +7,14 @@ class Settings(BaseSettings):
     DB_HOST: str
     DB_PORT: str
     DB_NAME: str
+    SECRET_KEY: str
+    ALGORITHM: str
+    EXPIRE_ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     @property
     def DATABASE_URL(self):
         return (
-            f"postgresql://{self.DB_NAME}:{self.DB_PASS}@"
+            f"postgresql://{self.DB_USER}:{self.DB_PASS}@"
             f"{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 

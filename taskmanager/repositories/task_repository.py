@@ -1,33 +1,34 @@
 from typing import Union
 
 from taskmanager.database import get_pool
-from taskmanager.schemas import CreateTask, StatusFilter, Task, UpdateTask
+from taskmanager.schemas import CreateTask, StatusFilter, Task, UpdateTask, UserInDB
 
 
 class TaskRepository:
 
-    async def create_task(self, task: CreateTask) -> Task:
+    async def create_task(self, task: CreateTask, user: UserInDB) -> Task:
         pool = await get_pool()
         async with pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
-                INSERT INTO tasks(name, description, status)
-                VALUES($1, $2, $3)
-                RETURNING id, name, description, status
+                INSERT INTO tasks(name, description, status, user_id)
+                VALUES($1, $2, $3, $4)
+                RETURNING id, name, description, status, user_id
                 """,
                 task.name,
                 task.description,
                 task.status,
+                user.id,
             )
         return Task(**row)
 
-    async def get_tasks(self, status: StatusFilter | None = None) -> list[Task]:
+    async def get_tasks(self, status: str | None = None) -> list[Task]:
         pool = await get_pool()
         async with pool.acquire() as conn:
             query = "SELECT id, name, description, status FROM tasks"
             if status:
                 query += " WHERE status = $1"
-                rows = await conn.fetch(query, status.status)
+                rows = await conn.fetch(query, status)
             else:
                 rows = await conn.fetch(query)
             return [Task(**row) for row in rows]

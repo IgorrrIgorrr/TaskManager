@@ -1,13 +1,13 @@
-from pydantic import Basemodel
+from pydantic import BaseModel
 
 
-class CreateTask(Basemodel):
+class CreateTask(BaseModel):
     name: str
     description: str | None = None
     status: str
 
 
-class Task(Basemodel):
+class Task(BaseModel):
     id: int
     name: str
     description: str | None = None
@@ -17,11 +17,29 @@ class Task(Basemodel):
         from_attributes = True
 
 
-class StatusFilter(Basemodel):
+class StatusFilter(BaseModel):
     status: str | None = None
 
 
-class UpdateTask(Basemodel):
+class UpdateTask(BaseModel):
     name: str | None = None
     description: str | None = None
     status: str | None = None
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str
+
+
+class User(BaseModel):
+    id: int | None = None
+    username: str
+
+
+class UserInDB(User):
+    password_hash: str

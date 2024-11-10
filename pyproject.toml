@@ -12,6 +12,8 @@ asyncpg = "^0.30.0"
 pydantic-settings = "^2.6.1"
 asyncio = "^3.4.3"
 python-multipart = "^0.0.17"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 
 [tool.poetry.group.dev.dependencies]
