@@ -87,13 +87,18 @@ async def get_tasks(
 
 @app.put("/tasks/{id}", response_model=Task)
 async def update_task(
-    id: int, update_info: UpdateTask, service: Annotated[Service, Depends(get_service)]
+    id: int,
+    update_info: UpdateTask,
+    service: Annotated[Service, Depends(get_service)],
+    user: Annotated[UserInDB, Depends(get_current_user_from_service)],
 ) -> Task:
     return await service.update_task(id, update_info)
 
 
 @app.delete("/tasks/{id}", response_model=dict)
 async def delete_task(
-    id: int, service: Annotated[Service, Depends(get_service)]
+    id: int,
+    service: Annotated[Service, Depends(get_service)],
+    user: Annotated[UserInDB, Depends(get_current_user_from_service)],
 ) -> dict:
     return await service.delete_task(id)
