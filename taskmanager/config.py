@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     ALGORITHM: str
     EXPIRE_ACCESS_TOKEN_EXPIRE_MINUTES: int
     EXPIRE_REFRESH_TOKEN_EXPIRE_DAYS: int
+    REDIS_URL: str
 
     @property
     def DATABASE_URL(self):

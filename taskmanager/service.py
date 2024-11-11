@@ -9,6 +9,7 @@ from taskmanager.auth import oauth2_scheme, pwd_context
 from taskmanager.config import settings
 from taskmanager.exceptions import credentials_exception
 from taskmanager.repositories.auth_repository import AuthRepository
+from taskmanager.repositories.redis_repository import RedisRepository
 from taskmanager.repositories.task_repository import TaskRepository
 from taskmanager.schemas import (
     CreateTask,
@@ -23,10 +24,14 @@ from taskmanager.schemas import (
 
 class Service:
     def __init__(
-        self, task_repository: TaskRepository, auth_repository: AuthRepository
+        self,
+        task_repository: TaskRepository,
+        auth_repository: AuthRepository,
+        redis_repository: RedisRepository,
     ):
         self._task_repository = task_repository
         self._auth_repository = auth_repository
+        self._redis_repository = redis_repository
 
     async def create_task(self, task: CreateTask, user: UserInDB) -> Task:
         return await self._task_repository.create_task(task, user)
@@ -121,3 +126,21 @@ class Service:
         return Token(
             access_token=access_token, token_type="bearer", refresh_token=refresh_token
         )
+
+    async def store_refresh_token_in_redis(
+        self, user_id: int, token: str, expires_days: int
+    ):
+        await self._redis_repository.store_refresh_token_in_redis(
+            user_id, token, expires_days
+        )
+
+    async def validate_refresh_token_in_redis(
+        self, user_id: int | None, token: str
+    ) -> bool:
+        stored_token = await self._redis_repository.validate_refresh_token_in_redis(
+            user_id, token
+        )
+        return stored_token == token
+
+    async def delete_refresh_token_in_redis(self, user_id: int):
+        await self._redis_repository.delete_refresh_token_in_redis(user_id)

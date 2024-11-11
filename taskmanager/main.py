@@ -73,8 +73,13 @@ async def registration(
 
 @app.post("/auth/refresh")
 async def refresh_access_token(
-    service: Annotated[Service, Depends(get_service)], refresh_token: str = Form(...)
+    service: Annotated[Service, Depends(get_service)],
+    user: Annotated[UserInDB, Depends(get_current_user_from_service)],
+    refresh_token: str = Form(...),
 ) -> Token:
+    is_valid = await service.validate_refresh_token_in_redis(user.id, refresh_token)
+    if not is_valid:
+        raise credentials_exception
     new_token = await service.refresh_access_token(refresh_token)
     if not new_token:
         raise credentials_exception
