@@ -101,7 +101,9 @@ class Service:
         return user
 
     async def refresh_access_token(self, refresh_token: str) -> Token | None:
-        payload = jwt.decode(refresh_token)
+        payload = jwt.decode(
+            refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
         if payload is None:
             raise credentials_exception
 
