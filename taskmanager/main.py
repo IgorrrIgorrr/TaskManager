@@ -75,24 +75,10 @@ async def registration(
 async def refresh_access_token(
     service: Annotated[Service, Depends(get_service)], refresh_token: str = Form(...)
 ) -> Token:
-    payload = jwt.decode_token(refresh_token)
-    if payload is None:
+    new_token = await service.refresh_access_token(refresh_token)
+    if not new_token:
         raise credentials_exception
-
-    username = payload.get("sub")
-    if username is None:
-        raise credentials_exception
-
-    access_token_expires = timedelta(
-        minutes=settings.EXPIRE_ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-    access_token = service.create_access_token(
-        {"sub": username}, expires_delta=access_token_expires
-    )
-
-    return Token(
-        access_token=access_token, token_type="bearer", refresh_token=refresh_token
-    )
+    return new_token
 
 
 @app.post("/tasks", response_model=Task)

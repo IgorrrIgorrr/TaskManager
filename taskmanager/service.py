@@ -99,3 +99,23 @@ class Service:
         if user is None:
             raise credentials_exception
         return user
+
+    async def refresh_access_token(self, refresh_token: str) -> Token | None:
+        payload = jwt.decode(refresh_token)
+        if payload is None:
+            raise credentials_exception
+
+        username = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+
+        access_token_expires = timedelta(
+            minutes=settings.EXPIRE_ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+        access_token = self.create_access_token(
+            {"sub": username}, expires_delta=access_token_expires
+        )
+
+        return Token(
+            access_token=access_token, token_type="bearer", refresh_token=refresh_token
+        )
