@@ -128,7 +128,7 @@ class Service:
         )
 
     async def store_refresh_token_in_redis(
-        self, user_id: int, token: str, expires_days: int
+        self, user_id: int | None, token: str, expires_days: timedelta
     ):
         await self._redis_repository.store_refresh_token_in_redis(
             user_id, token, expires_days
@@ -140,7 +140,7 @@ class Service:
         stored_token = await self._redis_repository.validate_refresh_token_in_redis(
             user_id, token
         )
-        return stored_token == token
+        return stored_token
 
     async def delete_refresh_token_in_redis(self, user_id: int):
         await self._redis_repository.delete_refresh_token_in_redis(user_id)

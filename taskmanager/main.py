@@ -52,6 +52,9 @@ async def login_for_tokens(
     refresh_token = service.create_refresh_token(
         {"sub": user.username}, expires_delta=refresh_token_expires
     )
+    await service.store_refresh_token_in_redis(
+        user.id, refresh_token, refresh_token_expires
+    )
     return Token(
         access_token=access_token, token_type="bearer", refresh_token=refresh_token
     )
