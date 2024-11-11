@@ -5,6 +5,7 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, Form, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from jose import jwt
 
 from taskmanager.auth import oauth2_scheme
 from taskmanager.config import settings
@@ -47,7 +48,13 @@ async def login_for_tokens(
     access_token = service.create_access_token(
         {"sub": user.username}, expires_delta=access_token_expires
     )
-    return Token(access_token=access_token, token_type="bearer")
+    refresh_token_expires = timedelta(days=settings.EXPIRE_REFRESH_TOKEN_EXPIRE_DAYS)
+    refresh_token = service.create_refresh_token(
+        {"sub": user.username}, expires_delta=refresh_token_expires
+    )
+    return Token(
+        access_token=access_token, token_type="bearer", refresh_token=refresh_token
+    )
 
 
 @app.post("/auth/register")
@@ -64,7 +71,28 @@ async def registration(
     return user
 
 
-# @app.post("/auth/refresh")
+@app.post("/auth/refresh")
+async def refresh_access_token(
+    service: Annotated[Service, Depends(get_service)], refresh_token: str = Form(...)
+) -> Token:
+    payload = jwt.decode_token(refresh_token)
+    if payload is None:
+        raise credentials_exception
+
+    username = payload.get("sub")
+    if username is None:
+        raise credentials_exception
+
+    access_token_expires = timedelta(
+        minutes=settings.EXPIRE_ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    access_token = service.create_access_token(
+        {"sub": username}, expires_delta=access_token_expires
+    )
+
+    return Token(
+        access_token=access_token, token_type="bearer", refresh_token=refresh_token
+    )
 
 
 @app.post("/tasks", response_model=Task)

@@ -69,6 +69,19 @@ class Service:
         )
         return encoded_jwt
 
+    @staticmethod
+    def create_refresh_token(data: dict, expires_delta: timedelta | None = None) -> str:
+        to_encode = data.copy()
+        if expires_delta:
+            expire = datetime.now(timezone.utc) + expires_delta
+        else:
+            expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(
+            to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+        )
+        return encoded_jwt
+
     async def get_current_user(
         self, token: Annotated[str, Depends(oauth2_scheme)]
     ) -> UserInDB:

@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     EXPIRE_ACCESS_TOKEN_EXPIRE_MINUTES: int
+    EXPIRE_REFRESH_TOKEN_EXPIRE_DAYS: int
 
     @property
     def DATABASE_URL(self):
