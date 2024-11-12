@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: fastapi-service
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST=${DB_HOST}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-network
+    volumes:
+      - .:/app
+
+  postgres:
+    image: postgres:13
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: new_password
+      POSTGRES_DB: taskmanager
+    ports:
+      - "5434:5432"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: redis-db
+    ports:
+      - "6380:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

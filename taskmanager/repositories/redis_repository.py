@@ -5,7 +5,7 @@ import redis.asyncio as aioredis  # type: ignore
 
 class RedisRepository:
     def __init__(self):
-        self.redis = aioredis.from_url("redis://localhost:6379", decode_responses=True)
+        self.redis = aioredis.from_url("redis://redis-db:6379", decode_responses=True)
 
     async def store_refresh_token_in_redis(
         self, user_id: int | None, token: str, expires_days: timedelta
